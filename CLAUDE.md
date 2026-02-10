@@ -17,3 +17,13 @@ Defined in `.cloud/settings.json` — the following run without prompts:
 - GitHub CLI: `gh issue view`
 - Web: `WebFetch` (all domains)
 - Skills: all
+
+## Context7
+
+Toujours utiliser les outils MCP Context7 automatiquement (sans attendre une demande explicite) dans les cas suivants :
+
+- Génération de code impliquant une bibliothèque ou un framework
+- Étapes de configuration, d'installation ou d'intégration
+- Documentation d'une bibliothèque ou d'une API
+
+Workflow obligatoire : appeler `resolve-library-id` en premier pour obtenir l'identifiant Context7, puis `query-docs` pour récupérer la documentation à jour avant de générer du code ou des instructions.

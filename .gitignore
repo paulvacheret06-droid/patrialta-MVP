@@ -1,4 +1,4 @@
-# Environment & secrets
+# Environment & secrets — never commit these
 .env
 .env.*
 *.env
@@ -8,6 +8,14 @@ secrets.yml
 *_credentials.json
 *_key.json
 credentials/
+
+# Claude Code — track config, but not secrets inside it
+# .claude/ and .cloud/ are intentionally tracked
+.claude/memory/        # auto-memory is local-only
+.claude/local_settings.json
+
+# Playwright MCP (local artefacts)
+.playwright-mcp/
 
 # Python
 __pycache__/
