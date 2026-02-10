@@ -1,0 +1,25 @@
+# Environment & secrets
+.env
+.env.*
+*.env
+secrets.json
+secrets.yaml
+secrets.yml
+*_credentials.json
+*_key.json
+credentials/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+
+# macOS
+.DS_Store
