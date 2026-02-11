@@ -382,12 +382,11 @@ Row Level Security (RLS) PostgreSQL natif via Supabase. Chaque utilisateur n'acc
 
 ### Onboarding progressif — stratégie d'authentification
 
-**Décision à prendre avant de commencer** : est-ce que l'étape 1 (saisie monument + résultats) est accessible sans compte ?
+**Décision prise** : sessions anonymes Supabase (`signInAnonymously()`) — Option A.
 
-- **Option A** : Sessions anonymes Supabase (`signInAnonymously()`) → `user_id` toujours non-null, RLS inchangé, conversion vers compte complet à l'étape 2
-- **Option B** : Étape 1 en lecture seule côté client (données non sauvegardées) → inscription requise pour sauvegarder
-
-Cette décision impacte le schéma (`user_id nullable ou non`), le RLS, et le flux d'inscription. **À documenter ici avant de coder.**
+- `user_id` toujours non-null → RLS inchangé, schéma simplifié
+- Conversion vers compte complet à l'étape 2 (sauvegarde monument / accès S2)
+- L'étape 1 (saisie monument + résultats) est accessible sans compte via session anonyme
 
 ### Données des aides
 La base initiale de 30-50 aides pilotes est saisie directement via Supabase Studio (Table Editor). Pas d'interface admin dédiée pour le MVP. Extension via Aides-territoires sync + saisie manuelle Supabase Studio.

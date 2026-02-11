@@ -1,0 +1,64 @@
+schema: spec-driven
+
+context: |
+  ## Projet : PatriAlta
+  SaaS B2B Next.js 15 (App Router) — plateforme d'identification des aides financières pour monuments historiques et générateur de dossiers de subvention.
+
+  ## Stack technique
+  - Framework : Next.js 15 App Router, TypeScript strict
+  - Base de données : Supabase PostgreSQL (Frankfurt EU) + Supabase Auth + Supabase Storage
+  - ORM : Supabase TypeScript SDK (types auto-générés)
+  - Hébergement : Vercel Pro (Frankfurt EU)
+  - Styling : Tailwind CSS + shadcn/ui
+  - Email : Brevo API v3
+  - PDF : @react-pdf/renderer (runtime nodejs uniquement — incompatible Edge)
+  - Word : docx (npm)
+  - IA : Claude API — modèles claude-sonnet-4-5-20250929 / claude-opus-4-6 (S2 uniquement, jamais pour le matching)
+  - Cron : Vercel Cron Pro (sync-aides 3h + send-alerts 8h)
+  - Validation : Zod (données API Aides-territoires)
+  - Monitoring : Sentry
+
+  ## Architecture des services
+  - **S1 — Mouline** : moteur d'éligibilité 100% déterministe TypeScript pur (aucun LLM). Croise données monument × critères des aides. Sources : API Mérimée (cache 24h) + Aides-territoires (sync cron) + base interne.
+  - **S2 — Montage** : génération dossiers de subvention via Claude API streaming SSE. Templates par organisme en TypeScript statique (/lib/templates/). Validation humaine obligatoire.
+
+  ## Conventions de développement
+  - Matching S1 : zéro LLM, logique déterministe pure, testable unitairement
+  - Interfaces TypeScript définies avant tout code applicatif (Critere, ResultatEligibilite, ContenuDossier, Template, ReglesCumul)
+  - Server Actions pour CRUD monuments, profils, alertes, simulateur de financement
+  - Route Handlers : /api/merimee/search, /api/aides/sync (protégée CRON_SECRET), /api/dossiers/generate (JWT + ownership + rate limit)
+  - RLS Supabase natif — pas de middleware applicatif pour la sécurité multi-tenant
+  - Commits conventionnels (feat, fix, chore, etc.)
+  - Épingler toutes les dépendances avant le premier commit
+  - Routes PDF : export const runtime = 'nodejs' obligatoire
+
+  ## Domaine métier
+  - Cibles : communes (petites/moyennes/grandes) + propriétaires privés de monuments historiques
+  - Régions pilotes : Auvergne-Rhône-Alpes + Aube
+  - 30–50 aides référencées au lancement (État/DRAC, régions, départements, fondations privées, Europe)
+  - Statut juridique propriétaire (collectivité / privé / association) = critère de filtrage clé
+  - Pas de score de confiance — affichage factuel uniquement (✓ / ✗ / ?)
+  - Voir openspec/projets.md pour le contexte complet
+
+  ## Outils MCP disponibles
+  - **Context7** : documentation à jour des librairies (Next.js, Supabase, shadcn/ui, Zod, etc.) — utiliser `resolve-library-id` puis `query-docs` avant tout code impliquant une dépendance externe.
+  - **Playwright** : tests E2E et vérification UI — utiliser pour valider les flows critiques (auth, génération de dossier, export PDF/Word).
+
+  ## Playwright — conventions
+  - Tests dans `tests/e2e/` avec naming `<feature>.spec.ts`
+  - Environnement : `http://localhost:3000` (dev Next.js)
+  - Captures d'écran dans `.playwright-mcp/` (déjà gitignored)
+
+rules:
+  proposal:
+    - Inclure une section "Non-goals" explicite
+    - Mentionner l'impact sur S1 (matching déterministe) vs S2 (Claude API) si pertinent
+    - Garder sous 500 mots
+  spec:
+    - Préciser les interfaces TypeScript concernées
+    - Indiquer les tables Supabase impactées et les changements RLS si nécessaire
+    - Préciser si Server Action ou Route Handler
+  tasks:
+    - Découper en tâches de max 2h
+    - Commencer par les interfaces/types avant le code applicatif
+    - Inclure les migrations SQL si changement de schéma

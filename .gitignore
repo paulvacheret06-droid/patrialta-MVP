@@ -10,9 +10,10 @@ secrets.yml
 credentials/
 
 # Claude Code — track config, but not secrets inside it
-# .claude/ and .cloud/ are intentionally tracked
-.claude/memory/        # auto-memory is local-only
-.claude/local_settings.json
+# .claude/settings.json and .cloud/settings.json are intentionally tracked
+# .mcp.json is intentionally tracked (shared MCP server config)
+.claude/memory/              # auto-memory is local-only
+.claude/settings.local.json  # local overrides, not shared
 
 # Playwright MCP (local artefacts)
 .playwright-mcp/
