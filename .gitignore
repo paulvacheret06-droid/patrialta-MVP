@@ -30,5 +30,17 @@ build/
 *.egg-info/
 .pytest_cache/
 
+# Next.js
+.next/
+out/
+node_modules/
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
 # macOS
 .DS_Store
