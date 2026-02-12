@@ -1,0 +1,11 @@
+name: t1-scaffolding-nextjs15
+schema: spec-driven
+status: complete
+created: "2026-02-12"
+artifacts:
+  proposal: done
+  spec: done
+  tasks: done
+implementation: done
+verification: done
+commit: bed73d5
