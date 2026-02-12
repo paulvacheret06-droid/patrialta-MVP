@@ -117,6 +117,14 @@ function buildCriteres(aide: Aide): Critere[] {
  * Évalue l'éligibilité d'un monument pour une aide donnée.
  * Résultats reproductibles : mêmes entrées → mêmes sorties.
  */
+/**
+ * Évalue l'éligibilité d'un monument pour un lot d'aides.
+ * Résultats ordonnés dans le même ordre que le tableau d'entrée.
+ */
+export function evaluerEligibilites(monument: Monument, aides: Aide[]): ResultatEligibilite[] {
+  return aides.map((aide) => evaluerEligibilite(monument, aide))
+}
+
 export function evaluerEligibilite(monument: Monument, aide: Aide): ResultatEligibilite {
   const criteres = buildCriteres(aide)
   const results = criteres.map((c) => evaluerCritere(monument, c))

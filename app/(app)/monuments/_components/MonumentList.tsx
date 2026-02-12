@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useTransition, useState } from 'react'
 import { deleteMonument } from '@/actions/monuments'
 
@@ -60,6 +61,13 @@ export default function MonumentList({ monuments }: MonumentListProps) {
           </div>
 
           <div className="flex-shrink-0 flex items-center gap-2">
+            <Link
+              href={`/monuments/${m.id}/aides`}
+              className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors"
+            >
+              Voir les aides
+            </Link>
+            <span className="text-gray-300">·</span>
             {pendingDeleteId === m.id ? (
               <>
                 <button
