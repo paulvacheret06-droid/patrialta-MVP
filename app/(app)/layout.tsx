@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { logoutAction } from '@/actions/auth'
 
@@ -22,7 +23,31 @@ export default async function AppLayout({
   return (
     <div className="min-h-screen bg-white">
       <header className="border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-        <span className="font-semibold text-sm text-gray-900">PatriAlta</span>
+        <div className="flex items-center gap-6">
+          <span className="font-semibold text-sm text-gray-900">PatriAlta</span>
+          {user && (
+            <nav className="flex items-center gap-1">
+              <Link
+                href="/monuments"
+                className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+              >
+                Monuments
+              </Link>
+              <Link
+                href="/aides"
+                className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+              >
+                Aides
+              </Link>
+              <Link
+                href="/dossiers"
+                className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+              >
+                Dossiers
+              </Link>
+            </nav>
+          )}
+        </div>
         {user && (
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-500">{user.email}</span>
