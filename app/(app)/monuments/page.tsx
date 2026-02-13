@@ -16,21 +16,35 @@ export default async function MonumentsPage() {
         .order('created_at', { ascending: false })
     : { data: [] }
 
+  const count = monuments?.length ?? 0
+
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8">
-      <h1 className="text-xl font-semibold text-gray-900 mb-6">Mes monuments</h1>
+    <div>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">Mes monuments</h1>
+        {count > 0 && (
+          <p className="text-sm text-gray-500 mt-1">
+            {count} monument{count > 1 ? 's' : ''} enregistré{count > 1 ? 's' : ''}
+          </p>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Liste */}
         <div className="lg:col-span-2">
           {!monuments || monuments.length === 0 ? (
             <EmptyState />
           ) : (
-            <div className="bg-white border border-gray-200 rounded-lg px-6">
+            <div
+              className="bg-white border border-gray-200 rounded-xl p-3 space-y-3"
+              style={{ boxShadow: 'var(--shadow-card)' }}
+            >
               <MonumentList monuments={monuments} />
             </div>
           )}
         </div>
 
+        {/* Formulaire */}
         <div id="monument-form">
           <MonumentForm />
         </div>

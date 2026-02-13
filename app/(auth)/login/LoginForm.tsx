@@ -4,6 +4,9 @@ import { useActionState } from 'react'
 import Link from 'next/link'
 import { loginAction } from '@/actions/auth'
 import type { LoginFormState } from '@/lib/validations/auth'
+import Card from '@/components/ui/Card'
+import Input from '@/components/ui/Input'
+import Button from '@/components/ui/Button'
 
 const initialState: LoginFormState = {}
 
@@ -11,9 +14,9 @@ export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
   const [state, formAction, isPending] = useActionState(loginAction, initialState)
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+    <Card variant="elevated">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Connexion</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Connexion</h1>
         <p className="text-sm text-gray-500 mt-1">Accédez à votre espace PatriAlta</p>
       </div>
 
@@ -21,54 +24,57 @@ export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
         {redirectTo && <input type="hidden" name="redirect" value={redirectTo} />}
 
         {state.error && (
-          <div className="rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+          <div
+            className="rounded-lg px-4 py-3 text-sm"
+            style={{
+              backgroundColor: 'color-mix(in srgb, var(--color-error) 10%, transparent)',
+              border: '1px solid color-mix(in srgb, var(--color-error) 20%, transparent)',
+              color: 'var(--color-error)',
+            }}
+          >
             {state.error}
           </div>
         )}
 
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Adresse email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-          />
-        </div>
+        <Input
+          label="Adresse email"
+          id="email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+        />
 
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            Mot de passe
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-          />
-        </div>
+        <Input
+          label="Mot de passe"
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          required
+        />
 
-        <button
+        <Button
           type="submit"
-          disabled={isPending}
-          className="w-full rounded-md bg-gray-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          variant="primary"
+          size="md"
+          loading={isPending}
+          className="w-full"
         >
           {isPending ? 'Connexion…' : 'Se connecter'}
-        </button>
+        </Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-gray-500">
         Pas encore de compte ?{' '}
-        <Link href="/signup" className="font-medium text-gray-900 hover:underline">
+        <Link
+          href="/signup"
+          className="font-medium hover:underline"
+          style={{ color: 'var(--color-primary)' }}
+        >
           Créer un compte
         </Link>
       </p>
-    </div>
+    </Card>
   )
 }

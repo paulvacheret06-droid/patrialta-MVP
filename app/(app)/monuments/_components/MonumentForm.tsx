@@ -4,8 +4,14 @@ import { useActionState, useEffect, useState, useCallback } from 'react'
 import { createMonument } from '@/actions/monuments'
 import MerimeeSearch, { type MerimeeSelection } from './MerimeeSearch'
 import type { MonumentFormState } from '@/lib/validations/monuments'
+import Card from '@/components/ui/Card'
+import Input from '@/components/ui/Input'
+import Button from '@/components/ui/Button'
 
 const initialState: MonumentFormState = {}
+
+const selectClasses =
+  'w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#0c5ce9] focus:border-[#0c5ce9]'
 
 export default function MonumentForm() {
   const [state, formAction, isPending] = useActionState(createMonument, initialState)
@@ -30,12 +36,17 @@ export default function MonumentForm() {
   }, [])
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6">
-      <h2 className="text-sm font-semibold text-gray-900 mb-4">Ajouter un monument</h2>
-
+    <Card variant="elevated" title="Ajouter un monument">
       <form key={formKey} action={formAction} className="space-y-4">
         {state.errors?._form && (
-          <div className="rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+          <div
+            className="rounded-lg px-4 py-3 text-sm"
+            style={{
+              backgroundColor: 'color-mix(in srgb, var(--color-error) 10%, transparent)',
+              border: '1px solid color-mix(in srgb, var(--color-error) 20%, transparent)',
+              color: 'var(--color-error)',
+            }}
+          >
             {state.errors._form[0]}
           </div>
         )}
@@ -43,7 +54,9 @@ export default function MonumentForm() {
         {!isManualMode ? (
           <>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Nom du monument</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Nom du monument
+              </label>
               <MerimeeSearch onSelect={handleSelect} onFallback={handleFallback} />
             </div>
 
@@ -61,9 +74,23 @@ export default function MonumentForm() {
                     value={selection.type_protection}
                   />
                 )}
-                <div className="rounded-md bg-gray-50 border border-gray-200 px-4 py-3 text-sm">
-                  <p className="font-medium text-gray-900">{selection.nom}</p>
-                  <p className="text-gray-500 text-xs mt-0.5">
+                <div
+                  className="rounded-lg px-4 py-3 text-sm border border-gray-200"
+                  style={{ backgroundColor: '#f8fafc' }}
+                >
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <p className="font-medium text-gray-900 truncate">{selection.nom}</p>
+                    <span
+                      className="shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full"
+                      style={{
+                        backgroundColor: 'color-mix(in srgb, var(--color-success) 12%, white)',
+                        color: 'var(--color-success)',
+                      }}
+                    >
+                      Mérimée
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500">
                     {selection.commune} · {selection.departement} · {selection.region}
                   </p>
                 </div>
@@ -73,90 +100,70 @@ export default function MonumentForm() {
             <button
               type="button"
               onClick={() => setIsManualMode(true)}
-              className="text-sm text-gray-500 hover:text-gray-700 underline"
+              className="text-sm hover:underline"
+              style={{ color: 'var(--color-secondary)' }}
             >
               Je ne trouve pas mon monument
             </button>
           </>
         ) : (
           <>
-            <div className="rounded px-3 py-2 text-xs text-amber-800 bg-amber-50 border border-amber-200">
+            <div
+              className="rounded-lg px-3 py-2 text-xs font-medium"
+              style={{
+                backgroundColor: 'color-mix(in srgb, var(--color-warning) 10%, white)',
+                border: '1px solid color-mix(in srgb, var(--color-warning) 25%, transparent)',
+                color: '#92400e',
+              }}
+            >
               Saisie manuelle
             </div>
 
-            <div>
-              <label htmlFor="nom" className="block text-sm text-gray-600 mb-1">
-                Nom du monument <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="nom"
-                name="nom"
-                type="text"
-                required
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-              />
-              {state.errors?.nom && (
-                <p className="mt-1 text-xs text-red-600">{state.errors.nom[0]}</p>
-              )}
-            </div>
+            <Input
+              id="nom"
+              name="nom"
+              type="text"
+              required
+              label="Nom du monument"
+              error={state.errors?.nom?.[0]}
+            />
 
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label htmlFor="commune" className="block text-sm text-gray-600 mb-1">
-                  Commune <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="commune"
-                  name="commune"
-                  type="text"
-                  required
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                />
-                {state.errors?.commune && (
-                  <p className="mt-1 text-xs text-red-600">{state.errors.commune[0]}</p>
-                )}
-              </div>
-              <div>
-                <label htmlFor="departement" className="block text-sm text-gray-600 mb-1">
-                  Département <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="departement"
-                  name="departement"
-                  type="text"
-                  required
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                />
-                {state.errors?.departement && (
-                  <p className="mt-1 text-xs text-red-600">{state.errors.departement[0]}</p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="region" className="block text-sm text-gray-600 mb-1">
-                Région <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="region"
-                name="region"
+              <Input
+                id="commune"
+                name="commune"
                 type="text"
                 required
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                label="Commune"
+                error={state.errors?.commune?.[0]}
               />
-              {state.errors?.region && (
-                <p className="mt-1 text-xs text-red-600">{state.errors.region[0]}</p>
-              )}
+              <Input
+                id="departement"
+                name="departement"
+                type="text"
+                required
+                label="Département"
+                error={state.errors?.departement?.[0]}
+              />
             </div>
 
-            <div>
-              <label htmlFor="type_protection" className="block text-sm text-gray-600 mb-1">
+            <Input
+              id="region"
+              name="region"
+              type="text"
+              required
+              label="Région"
+              error={state.errors?.region?.[0]}
+            />
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="type_protection" className="text-sm font-medium text-gray-700">
                 Type de protection
               </label>
               <select
                 id="type_protection"
                 name="type_protection"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                className={selectClasses}
               >
                 <option value="">Non précisé</option>
                 <option value="classe">Classé Monument Historique</option>
@@ -173,7 +180,8 @@ export default function MonumentForm() {
                 setIsManualMode(false)
                 setSelection(null)
               }}
-              className="text-sm text-gray-500 hover:text-gray-700 underline"
+              className="text-sm hover:underline"
+              style={{ color: 'var(--color-secondary)' }}
             >
               ← Revenir à la recherche
             </button>
@@ -181,15 +189,17 @@ export default function MonumentForm() {
         )}
 
         {(selection || isManualMode) && (
-          <button
+          <Button
             type="submit"
-            disabled={isPending}
-            className="w-full rounded-md bg-gray-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            variant="primary"
+            size="md"
+            loading={isPending}
+            className="w-full"
           >
             {isPending ? 'Ajout en cours…' : 'Ajouter le monument'}
-          </button>
+          </Button>
         )}
       </form>
-    </div>
+    </Card>
   )
 }

@@ -16,11 +16,41 @@ const STATUT_LABELS: Record<string, string> = {
   finalise: 'Finalisé',
 }
 
-const STATUT_COLORS: Record<string, string> = {
-  brouillon: 'bg-gray-100 text-gray-600',
-  en_cours: 'bg-amber-100 text-amber-700',
-  finalise: 'bg-green-100 text-green-700',
+type StatutStyle = { backgroundColor: string; color: string }
+
+function getStatutStyle(statut: string): StatutStyle {
+  switch (statut) {
+    case 'brouillon':
+      return { backgroundColor: '#f3f4f6', color: '#4b5563' }
+    case 'en_cours':
+      return {
+        backgroundColor: 'color-mix(in srgb, var(--color-warning) 12%, white)',
+        color: '#92400e',
+      }
+    case 'finalise':
+      return {
+        backgroundColor: 'color-mix(in srgb, var(--color-success) 12%, white)',
+        color: '#065f46',
+      }
+    default:
+      return { backgroundColor: '#f3f4f6', color: '#4b5563' }
+  }
 }
+
+const Chevron = () => (
+  <svg
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    className="w-3.5 h-3.5 text-gray-300 shrink-0"
+    aria-hidden="true"
+  >
+    <path
+      fillRule="evenodd"
+      d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+      clipRule="evenodd"
+    />
+  </svg>
+)
 
 export default async function DossierPage(props: {
   params: Promise<{ id: string }>
@@ -73,39 +103,47 @@ export default async function DossierPage(props: {
     ? new Date(aide.date_depot_fin).toLocaleDateString('fr-FR')
     : null
 
+  const statutStyle = getStatutStyle(dossier.statut)
+
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8">
+    <div className="max-w-4xl mx-auto">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-gray-400 mb-6">
-        <Link href="/monuments" className="hover:text-gray-600 transition-colors">
+      <nav className="flex items-center gap-1.5 text-xs text-gray-400 mb-6">
+        <Link href="/monuments" className="hover:text-gray-700 transition-colors">
           Monuments
         </Link>
-        <span>/</span>
+        <Chevron />
         <Link
           href={`/monuments/${monument.id}/aides`}
-          className="hover:text-gray-600 transition-colors"
+          className="hover:text-gray-700 transition-colors"
         >
           {monument.nom}
         </Link>
-        <span>/</span>
-        <span className="text-gray-900">Dossier</span>
+        <Chevron />
+        <span className="text-gray-900 font-medium">Dossier</span>
       </nav>
 
       {/* En-tête */}
       <div className="mb-6">
         <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-900">{aide.nom}</h1>
+          <div className="min-w-0">
+            <h1 className="text-2xl font-bold text-gray-900 leading-tight">{aide.nom}</h1>
             <p className="text-sm text-gray-500 mt-1">
               {monument.nom} · {monument.commune} · {monument.departement}
             </p>
             <p className="text-xs text-gray-400 mt-0.5">
               {aide.organisme_nom}
-              {deadline && ` · Date limite : ${deadline}`}
+              {deadline && (
+                <>
+                  {' · '}
+                  <span>Date limite : {deadline}</span>
+                </>
+              )}
             </p>
           </div>
           <span
-            className={`inline-flex items-center rounded px-2.5 py-1 text-xs font-medium ${STATUT_COLORS[dossier.statut] ?? 'bg-gray-100 text-gray-600'}`}
+            className="inline-flex items-center shrink-0 rounded-full px-3 py-1 text-xs font-semibold"
+            style={statutStyle}
           >
             {STATUT_LABELS[dossier.statut] ?? dossier.statut}
           </span>
@@ -124,8 +162,11 @@ export default async function DossierPage(props: {
         />
       </div>
 
-      {/* Bouton de génération + exports */}
-      <div className="mt-5 flex items-center justify-between gap-4 flex-wrap">
+      {/* Génération + exports */}
+      <div
+        className="mt-5 flex items-center justify-between gap-4 flex-wrap bg-white border border-gray-200 rounded-xl px-5 py-4"
+        style={{ boxShadow: 'var(--shadow-card)' }}
+      >
         <GenerationButton dossierId={dossier.id} statut={dossier.statut} />
         {Object.keys(sectionsContenu).length > 0 && (
           <ExportButtons dossierId={dossier.id} />
@@ -135,7 +176,9 @@ export default async function DossierPage(props: {
       {/* Sections éditables */}
       {Object.keys(sectionsContenu).length > 0 && (
         <div className="mt-8 space-y-6">
-          <h2 className="text-sm font-medium text-gray-700">Contenu du dossier</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-400">
+            Contenu du dossier
+          </h2>
           {template.sections.map((section) => {
             const sectionData = sectionsContenu[section.id]
             return (

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { logoutAction } from '@/actions/auth'
+import AppHeader from '@/components/layout/AppHeader'
 
 export default async function AppLayout({
   children,
@@ -21,55 +22,59 @@ export default async function AppLayout({
     : { data: null }
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <span className="font-semibold text-sm text-gray-900">PatriAlta</span>
-          {user && (
-            <nav className="flex items-center gap-1">
-              <Link
-                href="/monuments"
-                className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-              >
-                Monuments
-              </Link>
-              <Link
-                href="/aides"
-                className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-              >
-                Aides
-              </Link>
-              <Link
-                href="/dossiers"
-                className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-              >
-                Dossiers
-              </Link>
-            </nav>
-          )}
-        </div>
-        {user && (
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-500">{user.email}</span>
-            <form action={logoutAction}>
-              <button
-                type="submit"
-                className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
-              >
-                Déconnexion
-              </button>
-            </form>
-          </div>
-        )}
-      </header>
+    <div className="min-h-screen bg-gray-50">
+      {user && (
+        <AppHeader
+          user={{ email: user.email ?? '' }}
+          logoutAction={logoutAction}
+        />
+      )}
 
       {user && !profile && (
-        <div className="bg-amber-50 border-b border-amber-200 px-6 py-2.5 text-sm text-amber-800">
-          Complétez votre profil pour accéder à toutes les fonctionnalités.
+        <div
+          className="border-b px-6 py-3"
+          style={{
+            backgroundColor: 'color-mix(in srgb, var(--color-warning) 8%, white)',
+            borderColor: 'color-mix(in srgb, var(--color-warning) 25%, transparent)',
+          }}
+        >
+          <div className="max-w-7xl mx-auto flex items-center gap-3">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+              style={{
+                backgroundColor: 'color-mix(in srgb, var(--color-warning) 18%, white)',
+                color: 'var(--color-warning)',
+              }}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                className="w-4 h-4"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+                />
+              </svg>
+            </div>
+            <p className="text-sm" style={{ color: '#92400e' }}>
+              Complétez votre profil pour accéder à toutes les fonctionnalités.{' '}
+              <Link
+                href="/monuments"
+                className="font-semibold underline hover:no-underline"
+              >
+                Continuer
+              </Link>
+            </p>
+          </div>
         </div>
       )}
 
-      <main>{children}</main>
+      <main className="max-w-7xl mx-auto px-6 py-8">{children}</main>
     </div>
   )
 }
