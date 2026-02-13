@@ -59,3 +59,16 @@ Le système SHALL fournir une Server Action `runMatching(monumentId: string): Pr
 #### Scenario: Idempotence — re-run sur même monument
 - **WHEN** `runMatching` est appelée deux fois de suite sur le même monument
 - **THEN** le nombre de lignes dans `eligibility_results` pour ce monument ne change pas (upsert)
+
+---
+
+### Requirement: Upsert eligibility_results via service_role
+La Server Action `runMatching` MUST utiliser le client `service_role` (via `createServiceClient()`) pour l'opération upsert sur `eligibility_results`. La table ne dispose pas de policy RLS UPDATE — PostgreSQL bloque `INSERT ON CONFLICT DO UPDATE` dès qu'une policy UPDATE est absente, même si aucun conflit n'existe. L'ownership du monument MUST être vérifié au préalable via le client authentifié avant tout appel au client service_role.
+
+#### Scenario: Upsert réussi sans policy UPDATE
+- **WHEN** `runMatching` est appelée sur un monument appartenant à l'utilisateur
+- **THEN** les lignes sont upsertées dans `eligibility_results` sans erreur RLS, grâce au client service_role
+
+#### Scenario: Ownership vérifié avant service_role
+- **WHEN** `runMatching` est appelée avec un `monumentId` d'un autre utilisateur
+- **THEN** la vérification via le client authentifié échoue avant que le client service_role ne soit utilisé, garantissant qu'aucune donnée d'un autre utilisateur n'est écrasée
