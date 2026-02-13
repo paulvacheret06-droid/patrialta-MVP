@@ -1,11 +1,11 @@
 ## ADDED Requirements
 
 ### Requirement: List user monuments
-Le système SHALL afficher la liste de tous les monuments appartenant à l'utilisateur connecté sur la page `/monuments`. La lecture MUST être protégée par RLS (chaque utilisateur ne voit que ses propres monuments).
+Le système SHALL afficher la liste de tous les monuments appartenant à l'utilisateur connecté sur la page `/monuments`. La lecture MUST être protégée par RLS (chaque utilisateur ne voit que ses propres monuments). Chaque monument DOIT afficher un lien "Voir les aides éligibles" pointant vers `/monuments/[id]/aides`.
 
 #### Scenario: Liste avec monuments existants
 - **WHEN** un utilisateur authentifié accède à `/monuments` et possède des monuments en base
-- **THEN** la page affiche chaque monument avec son nom, sa commune et son type de protection
+- **THEN** la page affiche chaque monument avec son nom, sa commune, son type de protection, et un lien "Voir les aides éligibles" vers `/monuments/[id]/aides`
 
 #### Scenario: Liste vide
 - **WHEN** un utilisateur authentifié accède à `/monuments` et n'a aucun monument en base
