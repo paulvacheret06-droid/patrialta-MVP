@@ -86,9 +86,5 @@ export function transformAideTerritorie(raw: AideTerritorie): Omit<Aide, 'id'> {
     external_id: raw.id,
     last_synced_at: new Date().toISOString(),
     is_active: raw.is_live ?? true,
-    // Champs non dans l'interface de base mais présents dans la table
-    organisme_nom: extractOrganisme(raw),
-    organisme_id: detectSource(raw),
-    description: raw.description ?? null,
-  } as unknown as Omit<Aide, 'id'>
+  }
 }
