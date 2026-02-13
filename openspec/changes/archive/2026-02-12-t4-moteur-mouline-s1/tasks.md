@@ -19,18 +19,18 @@
 
 - [x] 4.1 Créer `/lib/s1/seed/aides.ts` — exporter un tableau `Aide[]` de 10 aides : 3 DRAC (subvention MH classés, MH inscrits, FSIL patrimoine), 2 région AuRA, 2 Fondation du Patrimoine (label + Mission Loto), 2 fondations privées (VMF + Sauvegarde Art Français), 1 FEDER
 - [x] 4.2 Créer `scripts/seed-aides.ts` — lire `/lib/s1/seed/aides.ts`, valider chaque aide avec `AideSchema`, insérer via upsert sur `slug` avec le client `service_role`
-- [ ] 4.3 Exécuter `npx tsx scripts/seed-aides.ts` et vérifier que 10 lignes sont présentes dans `aides`
+- [x] 4.3 Exécuter `npx tsx scripts/seed-aides.ts` et vérifier que 10 lignes sont présentes dans `aides`
 
 ## 5. Moteur de matching — logique pure TypeScript
 
 - [x] 5.1 Créer `/lib/s1/matching.ts` — implémenter `matcherAide(monument: Monument, aide: Aide): ResultatEligibilite` : itérer sur `aide.criteres`, classer chaque critère en rempli / non_rempli / a_verifier selon les règles de D4, calculer `est_eligible`
 - [x] 5.2 Ajouter `matcherAides(monument: Monument, aides: Aide[]): ResultatEligibilite[]` — map sur le tableau d'aides
-- [ ] 5.3 Écrire des tests unitaires dans `__tests__/s1/matching.test.ts` : au moins 4 cas (critère rempli, non rempli, valeur null + obligatoire: false, tous critères remplis → est_eligible true)
+- [x] 5.3 Écrire des tests unitaires dans `__tests__/s1/matching.test.ts` : au moins 4 cas (critère rempli, non rempli, valeur null + obligatoire: false, tous critères remplis → est_eligible true)
 
 ## 6. Server Action — runMatching
 
 - [x] 6.1 Créer `/lib/actions/matching.ts` — Server Action `runMatching(monumentId: string)` : vérifier ownership via RLS, lire le monument, lire toutes les aides, appeler `matcherAides`, upsert dans `eligibility_results`, retourner les résultats
-- [ ] 6.2 Tester manuellement : appeler `runMatching` depuis la console sur un monument existant, vérifier les lignes dans `eligibility_results`
+- [x] 6.2 Tester manuellement : appeler `runMatching` depuis la console sur un monument existant, vérifier les lignes dans `eligibility_results`
 
 ## 7. Page d'affichage des aides éligibles
 

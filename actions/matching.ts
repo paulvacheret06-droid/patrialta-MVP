@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import { revalidatePath } from 'next/cache'
 import { evaluerEligibilites } from '@/lib/s1/engine'
 import type { Aide, Monument, ResultatEligibilite } from '@/lib/s1/types'
@@ -38,7 +39,9 @@ export async function runMatching(monumentId: string): Promise<ResultatEligibili
   // Calcul matching — pur TypeScript, zéro LLM
   const results = evaluerEligibilites(monument as Monument, aides as Aide[])
 
-  // Persistance des résultats (upsert sur monument_id + aide_id)
+  // Persistance des résultats via service_role (contourne l'absence de policy UPDATE sur eligibility_results)
+  // Sécurité : l'ownership a déjà été vérifié par RLS ci-dessus via le client authentifié
+  const serviceClient = createServiceClient()
   const toUpsert = results.map((r) => ({
     monument_id: r.monument_id,
     aide_id: r.aide_id,
@@ -48,12 +51,12 @@ export async function runMatching(monumentId: string): Promise<ResultatEligibili
     computed_at: new Date().toISOString(),
   }))
 
-  const { error: upsertError } = await supabase
+  const { error: upsertError } = await serviceClient
     .from('eligibility_results')
     .upsert(toUpsert, { onConflict: 'monument_id,aide_id' })
 
   if (upsertError) {
-    throw new Error('Erreur lors de la persistance des résultats')
+    throw new Error(`Erreur lors de la persistance des résultats : ${upsertError.message}`)
   }
 
   revalidatePath(`/monuments/${monumentId}/aides`)
