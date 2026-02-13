@@ -46,6 +46,7 @@ export async function signupAction(
     password: formData.get('password') as string,
     statut_juridique: formData.get('statut_juridique') as string,
     commune: formData.get('commune') as string,
+    rgpd_accepted: formData.get('rgpd_accepted') === 'on' ? 'true' : '',
   }
 
   const parsed = SignupSchema.safeParse(raw)
@@ -73,6 +74,7 @@ export async function signupAction(
     user_id: data.user.id,
     statut_juridique: parsed.data.statut_juridique,
     commune: parsed.data.commune,
+    rgpd_consent_at: new Date().toISOString(),
   })
 
   if (profileError) {

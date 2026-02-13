@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import MonumentList from './_components/MonumentList'
 import MonumentForm from './_components/MonumentForm'
+import EmptyState from './_components/EmptyState'
 
 export default async function MonumentsPage() {
   const supabase = await createClient()
@@ -22,12 +23,7 @@ export default async function MonumentsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           {!monuments || monuments.length === 0 ? (
-            <div className="text-center py-16 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-              <p className="text-sm text-gray-500 mb-1">Aucun monument ajouté</p>
-              <p className="text-xs text-gray-400">
-                Ajoutez votre premier monument pour commencer.
-              </p>
-            </div>
+            <EmptyState />
           ) : (
             <div className="bg-white border border-gray-200 rounded-lg px-6">
               <MonumentList monuments={monuments} />
@@ -35,7 +31,7 @@ export default async function MonumentsPage() {
           )}
         </div>
 
-        <div>
+        <div id="monument-form">
           <MonumentForm />
         </div>
       </div>

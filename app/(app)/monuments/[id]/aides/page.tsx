@@ -106,6 +106,19 @@ export default async function AidesPage(props: {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-8">
+      {/* Disclaimer non-contractuel */}
+      <div className="mb-6 flex items-start gap-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3">
+        <span className="text-amber-500 text-sm mt-0.5">⚠️</span>
+        <p className="text-xs text-amber-800 leading-relaxed">
+          <strong>Diagnostic indicatif</strong> — PatriAlta ne garantit pas l&apos;éligibilité finale.
+          La décision appartient à l&apos;organisme financeur. Vérifiez les conditions auprès de chaque source officielle.{' '}
+          <a href="/legal/cgu" target="_blank" rel="noopener noreferrer" className="underline hover:text-amber-900">
+            Voir nos CGU
+          </a>
+          .
+        </p>
+      </div>
+
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-xs text-gray-400 mb-6">
         <Link href="/monuments" className="hover:text-gray-600 transition-colors">

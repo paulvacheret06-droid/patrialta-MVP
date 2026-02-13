@@ -97,6 +97,28 @@ export default function SignupForm() {
           </div>
         </div>
 
+        {/* Consentement RGPD */}
+        <div className="flex items-start gap-3">
+          <input
+            id="rgpd_accepted"
+            name="rgpd_accepted"
+            type="checkbox"
+            required
+            className="mt-0.5 h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+          />
+          <label htmlFor="rgpd_accepted" className="text-xs text-gray-500 leading-relaxed">
+            J&apos;ai lu et j&apos;accepte les{' '}
+            <a href="/legal/cgu" target="_blank" rel="noopener noreferrer" className="font-medium text-gray-900 hover:underline">
+              CGU
+            </a>{' '}
+            et la{' '}
+            <a href="/legal/confidentialite" target="_blank" rel="noopener noreferrer" className="font-medium text-gray-900 hover:underline">
+              politique de confidentialité
+            </a>
+            .
+          </label>
+        </div>
+
         <button
           type="submit"
           disabled={isPending}

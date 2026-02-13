@@ -13,6 +13,9 @@ export const SignupSchema = z.object({
     invalid_type_error: 'Statut juridique invalide.',
   }),
   commune: z.string().min(1, 'Veuillez renseigner votre commune ou département.'),
+  rgpd_accepted: z.literal('true', {
+    errorMap: () => ({ message: 'Vous devez accepter les CGU et la politique de confidentialité.' }),
+  }),
 })
 
 export type LoginFormState = {
