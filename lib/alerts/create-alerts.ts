@@ -7,10 +7,12 @@
  */
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+function getSupabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+}
 
 export async function createAlertsForNewAides(newAideIds: string[]): Promise<number> {
   if (newAideIds.length === 0) return 0
@@ -18,7 +20,7 @@ export async function createAlertsForNewAides(newAideIds: string[]): Promise<num
   let totalCreated = 0
 
   // Récupérer les nouvelles aides avec leurs critères d'éligibilité
-  const { data: aides } = await supabaseAdmin
+  const { data: aides } = await getSupabaseAdmin()
     .from('aides')
     .select('id, nom, region_eligible, departement_eligible, statut_juridique_eligible, type_monument_eligible')
     .in('id', newAideIds)
@@ -28,7 +30,7 @@ export async function createAlertsForNewAides(newAideIds: string[]): Promise<num
 
   for (const aide of aides) {
     // Trouver les monuments potentiellement compatibles
-    let query = supabaseAdmin
+    let query = getSupabaseAdmin()
       .from('monuments')
       .select('id, user_id, region, departement, type_protection, statut_juridique')
       .eq('is_active', true)
@@ -48,7 +50,7 @@ export async function createAlertsForNewAides(newAideIds: string[]): Promise<num
     // Pour chaque monument compatible, créer une alerte si pas de doublon
     for (const monument of monuments) {
       // Vérification doublon pending
-      const { data: existing } = await supabaseAdmin
+      const { data: existing } = await getSupabaseAdmin()
         .from('alerts')
         .select('id')
         .eq('monument_id', monument.id)
@@ -59,7 +61,7 @@ export async function createAlertsForNewAides(newAideIds: string[]): Promise<num
 
       if (existing) continue
 
-      const { error } = await supabaseAdmin.from('alerts').insert({
+      const { error } = await getSupabaseAdmin().from('alerts').insert({
         user_id: monument.user_id,
         monument_id: monument.id,
         aide_id: aide.id,

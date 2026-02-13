@@ -8,10 +8,12 @@
  */
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+function getSupabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+}
 
 const BATCH_SIZE = 100
 
@@ -71,7 +73,7 @@ export async function sendPendingAlerts(): Promise<{ sent: number; failed: numbe
   const now = new Date().toISOString()
 
   // Récupérer les alertes pending éligibles
-  const { data: alerts } = await supabaseAdmin
+  const { data: alerts } = await getSupabaseAdmin()
     .from('alerts')
     .select(`
       id, user_id, monument_id, aide_id, type, metadata,
@@ -98,7 +100,7 @@ export async function sendPendingAlerts(): Promise<{ sent: number; failed: numbe
 
   for (const [userId, userAlerts] of byUser) {
     // Récupérer l'email de l'utilisateur via profiles
-    const { data: profile } = await supabaseAdmin
+    const { data: profile } = await getSupabaseAdmin()
       .from('profiles')
       .select('email')
       .eq('id', userId)
@@ -135,7 +137,7 @@ export async function sendPendingAlerts(): Promise<{ sent: number; failed: numbe
 
     // Marquer les alertes comme envoyées ou failed
     const alertIds = userAlerts.map((a) => a.id)
-    await supabaseAdmin
+    await getSupabaseAdmin()
       .from('alerts')
       .update({ statut: ok ? 'sent' : 'pending', updated_at: new Date().toISOString() })
       .in('id', alertIds)

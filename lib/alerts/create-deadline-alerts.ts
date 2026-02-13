@@ -7,17 +7,19 @@
  */
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+function getSupabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+}
 
 export async function createDeadlineAlerts(): Promise<number> {
   const now = new Date()
   const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
 
   // Aides avec deadline dans les 30 jours
-  const { data: aidesAvecDeadline } = await supabaseAdmin
+  const { data: aidesAvecDeadline } = await getSupabaseAdmin()
     .from('aides')
     .select('id, nom, date_depot_fin')
     .gte('date_depot_fin', now.toISOString())
@@ -30,7 +32,7 @@ export async function createDeadlineAlerts(): Promise<number> {
 
   for (const aide of aidesAvecDeadline) {
     // Trouver les monuments éligibles à cette aide (criteres_manquants vide)
-    const { data: eligibilityResults } = await supabaseAdmin
+    const { data: eligibilityResults } = await getSupabaseAdmin()
       .from('eligibility_results')
       .select('monument_id, criteres_manquants')
       .eq('aide_id', aide.id)
@@ -47,7 +49,7 @@ export async function createDeadlineAlerts(): Promise<number> {
     if (eligibleMonumentIds.length === 0) continue
 
     // Récupérer les monuments + user_id
-    const { data: monuments } = await supabaseAdmin
+    const { data: monuments } = await getSupabaseAdmin()
       .from('monuments')
       .select('id, user_id')
       .in('id', eligibleMonumentIds)
@@ -56,7 +58,7 @@ export async function createDeadlineAlerts(): Promise<number> {
 
     for (const monument of monuments) {
       // Vérification doublon pending
-      const { data: existing } = await supabaseAdmin
+      const { data: existing } = await getSupabaseAdmin()
         .from('alerts')
         .select('id')
         .eq('monument_id', monument.id)
@@ -67,7 +69,7 @@ export async function createDeadlineAlerts(): Promise<number> {
 
       if (existing) continue
 
-      const { error } = await supabaseAdmin.from('alerts').insert({
+      const { error } = await getSupabaseAdmin().from('alerts').insert({
         user_id: monument.user_id,
         monument_id: monument.id,
         aide_id: aide.id,
