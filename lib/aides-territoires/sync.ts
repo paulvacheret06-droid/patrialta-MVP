@@ -10,10 +10,12 @@ import { createClient } from '@supabase/supabase-js'
 import type { AideTerritorie } from '@/lib/validations/aides-territoires'
 import { transformAideTerritorie } from './transformer'
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+function getSupabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+}
 
 export interface SyncReport {
   inserted: number
@@ -41,14 +43,14 @@ export async function upsertAides(
       const transformed = transformAideTerritorie(aide)
 
       // Recherche par external_id pour savoir si c'est un insert ou update
-      const { data: existing } = await supabaseAdmin
+      const { data: existing } = await getSupabaseAdmin()
         .from('aides')
         .select('id')
         .eq('external_id', aide.id)
         .maybeSingle()
 
       if (existing) {
-        const { error } = await supabaseAdmin
+        const { error } = await getSupabaseAdmin()
           .from('aides')
           .update({ ...transformed, last_synced_at: new Date().toISOString() })
           .eq('id', existing.id)
@@ -60,7 +62,7 @@ export async function upsertAides(
           updated++
         }
       } else {
-        const { error } = await supabaseAdmin.from('aides').insert(transformed)
+        const { error } = await getSupabaseAdmin().from('aides').insert(transformed)
 
         if (error) {
           errors.push(`Insert ${aide.id}: ${error.message}`)
@@ -86,7 +88,7 @@ export async function markInactiveAides(activeExternalIds: string[]): Promise<nu
   if (activeExternalIds.length === 0) return 0
 
   // Récupérer tous les external_id en base
-  const { data: allAides } = await supabaseAdmin
+  const { data: allAides } = await getSupabaseAdmin()
     .from('aides')
     .select('id, external_id')
     .not('external_id', 'is', null)
@@ -99,7 +101,7 @@ export async function markInactiveAides(activeExternalIds: string[]): Promise<nu
 
   if (toDeactivate.length === 0) return 0
 
-  const { error } = await supabaseAdmin
+  const { error } = await getSupabaseAdmin()
     .from('aides')
     .update({ is_active: false, last_synced_at: new Date().toISOString() })
     .in(
