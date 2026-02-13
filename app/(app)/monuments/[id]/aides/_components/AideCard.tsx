@@ -1,4 +1,5 @@
 import type { Aide, CritereResult } from '@/lib/s1/types'
+import DossierCTAButton from './DossierCTAButton'
 
 type AideResultRow = {
   id: string
@@ -120,9 +121,9 @@ export default function AideCard({ result }: { result: AideResultRow }) {
           )}
       </div>
 
-      {/* Lien source */}
-      {aide.url_source && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
+      {/* Footer : source + CTA dossier */}
+      <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between gap-3 flex-wrap">
+        {aide.url_source ? (
           <a
             href={aide.url_source}
             target="_blank"
@@ -131,8 +132,15 @@ export default function AideCard({ result }: { result: AideResultRow }) {
           >
             Voir la source officielle →
           </a>
-        </div>
-      )}
+        ) : (
+          <span />
+        )}
+
+        {/* CTA dossier — uniquement pour les aides éligibles */}
+        {statut === 'eligible' && (
+          <DossierCTAButton monumentId={result.monument_id} aideId={result.aide_id} />
+        )}
+      </div>
     </div>
   )
 }

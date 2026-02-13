@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { CreateMonumentSchema, type MonumentFormState } from '@/lib/validations/monuments'
+import { CreateMonumentSchema, UpdateMonumentProjetSchema, type MonumentFormState } from '@/lib/validations/monuments'
 
 export async function createMonument(
   _prevState: MonumentFormState,
@@ -64,4 +64,62 @@ export async function deleteMonument(id: string) {
   if (error) throw new Error(error.message)
 
   revalidatePath('/monuments')
+}
+
+export type ProjetFormState = {
+  errors?: {
+    description_projet?: string[]
+    type_travaux?: string[]
+    budget_estime?: string[]
+    _form?: string[]
+  }
+  success?: boolean
+}
+
+export async function updateMonumentProjet(
+  monumentId: string,
+  _prevState: ProjetFormState,
+  formData: FormData
+): Promise<ProjetFormState> {
+  const raw = {
+    description_projet: formData.get('description_projet') as string | null,
+    type_travaux: formData.getAll('type_travaux') as string[],
+    budget_estime: formData.get('budget_estime') ? Number(formData.get('budget_estime')) : null,
+  }
+
+  const parsed = UpdateMonumentProjetSchema.safeParse(raw)
+  if (!parsed.success) {
+    const errors: ProjetFormState['errors'] = {}
+    for (const issue of parsed.error.issues) {
+      const field = issue.path[0] as keyof NonNullable<ProjetFormState['errors']>
+      if (!errors[field]) errors[field] = []
+      errors[field]!.push(issue.message)
+    }
+    return { errors }
+  }
+
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return { errors: { _form: ['Non authentifié.'] } }
+
+  const { error } = await supabase
+    .from('monuments')
+    .update({
+      description_projet: parsed.data.description_projet ?? null,
+      type_travaux: parsed.data.type_travaux.length > 0 ? parsed.data.type_travaux : [],
+      budget_estime: parsed.data.budget_estime ?? null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', monumentId)
+    .eq('user_id', user.id)
+
+  if (error) {
+    return { errors: { _form: ['Erreur lors de la mise à jour du projet.'] } }
+  }
+
+  revalidatePath(`/monuments`)
+  revalidatePath(`/monuments/${monumentId}/aides`)
+  return { success: true }
 }

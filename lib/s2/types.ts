@@ -43,3 +43,35 @@ export interface Template {
   sections: SectionTemplate[]
   prompt_version: string
 }
+
+// ---------------------------------------------------------------------------
+// Statuts
+// ---------------------------------------------------------------------------
+
+export type DossierStatut = 'brouillon' | 'en_cours' | 'finalise'
+export type DocumentStatut = 'manquant' | 'uploade' | 'valide'
+export type AlertType = 'nouvelle_aide' | 'deadline_approche'
+export type AlertStatut = 'pending' | 'sent' | 'dismissed'
+
+// ---------------------------------------------------------------------------
+// Simulateur de financement
+// ---------------------------------------------------------------------------
+
+export interface SimulationAide {
+  id: string
+  nom: string
+  montant_estime: number
+  taux: number
+}
+
+export interface SimulationCombination {
+  aides: SimulationAide[]
+  total_estime: number
+  taux_couverture: number
+  respecte_plafond: boolean
+}
+
+export interface SimulationResult {
+  combinations: SimulationCombination[]
+  budget_total: number
+}

@@ -11,7 +11,7 @@ export default async function MonumentsPage() {
   const { data: monuments = [] } = user
     ? await supabase
         .from('monuments')
-        .select('id, nom, commune, departement, region, type_protection, is_verified_merimee')
+        .select('id, nom, commune, departement, region, type_protection, is_verified_merimee, type_travaux, budget_estime')
         .order('created_at', { ascending: false })
     : { data: [] }
 

@@ -36,8 +36,17 @@ export async function runMatching(monumentId: string): Promise<ResultatEligibili
     throw new Error('Erreur lors de la récupération des aides')
   }
 
+  // Mode projet : si type_travaux est renseigné, filtrer les aides par type_travaux_eligible
+  const m = monument as Monument
+  const aidesFiltered = m.type_travaux && m.type_travaux.length > 0
+    ? (aides as Aide[]).filter((a) => {
+        if (!a.type_travaux_eligible || a.type_travaux_eligible.length === 0) return true
+        return m.type_travaux!.some((t) => a.type_travaux_eligible.includes(t))
+      })
+    : (aides as Aide[])
+
   // Calcul matching — pur TypeScript, zéro LLM
-  const results = evaluerEligibilites(monument as Monument, aides as Aide[])
+  const results = evaluerEligibilites(m, aidesFiltered)
 
   // Persistance des résultats via service_role (contourne l'absence de policy UPDATE sur eligibility_results)
   // Sécurité : l'ownership a déjà été vérifié par RLS ci-dessus via le client authentifié

@@ -35,3 +35,24 @@ export type MonumentFormState = {
   }
   success?: boolean
 }
+
+const typeTravauxValues = [
+  'conservation',
+  'restauration',
+  'accessibilite',
+  'etudes',
+  'valorisation',
+  'urgence',
+] as const
+
+export const UpdateMonumentProjetSchema = z.object({
+  description_projet: z.preprocess(
+    (v) => (v === '' || v === undefined || v === null ? null : v),
+    z.string().max(2000).nullable()
+  ),
+  type_travaux: z.array(z.enum(typeTravauxValues)).default([]),
+  budget_estime: z.preprocess(
+    (v) => (v === null || v === undefined || v === '' ? null : Number(v)),
+    z.number().positive('Le budget doit être un nombre positif.').nullable()
+  ),
+})

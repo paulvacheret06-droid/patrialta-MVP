@@ -2,9 +2,20 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { runMatching } from '@/actions/matching'
+
+const TYPE_TRAVAUX_LABELS: Record<string, string> = {
+  conservation: 'Conservation',
+  restauration: 'Restauration',
+  accessibilite: 'Accessibilité',
+  etudes: 'Études',
+  valorisation: 'Valorisation',
+  urgence: 'Urgence',
+}
 import AideCard from './_components/AideCard'
 import CategoryFilter from './_components/CategoryFilter'
 import RecalcButton from './_components/RecalcButton'
+import SimulateurFinancement from './_components/SimulateurFinancement'
+import ExportPdfButton from './_components/ExportPdfButton'
 import type { Aide, CritereResult } from '@/lib/s1/types'
 
 type AideResultRow = {
@@ -44,7 +55,7 @@ export default async function AidesPage(props: {
   // Vérification ownership du monument (RLS)
   const { data: monument } = await supabase
     .from('monuments')
-    .select('id, nom, commune, departement, region, type_protection')
+    .select('id, nom, commune, departement, region, type_protection, type_travaux, budget_estime')
     .eq('id', params.id)
     .single()
 
@@ -117,13 +128,33 @@ export default async function AidesPage(props: {
             {eligibleCount} aide{eligibleCount > 1 ? 's' : ''} éligible{eligibleCount > 1 ? 's' : ''} sur {results.length}
           </p>
         )}
+        {monument.type_travaux && monument.type_travaux.length > 0 && (
+          <div className="flex items-center gap-2 mt-2 flex-wrap">
+            <span className="inline-flex items-center rounded px-2 py-0.5 text-xs font-medium bg-amber-50 text-amber-700">
+              Mode projet actif
+            </span>
+            {monument.type_travaux.map((t: string) => (
+              <span key={t} className="inline-flex items-center rounded px-2 py-0.5 text-xs bg-gray-100 text-gray-600">
+                {TYPE_TRAVAUX_LABELS[t] ?? t}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Filtres + Recalculer */}
+      {/* Filtres + Actions */}
       <div className="flex items-center justify-between gap-4 mb-5 flex-wrap">
         <CategoryFilter categories={CATEGORIES} current={categorie} />
-        <RecalcButton monumentId={params.id} />
+        <div className="flex items-center gap-2">
+          {eligibleCount > 0 && <ExportPdfButton monumentId={params.id} />}
+          <RecalcButton monumentId={params.id} />
+        </div>
       </div>
+
+      {/* Simulateur de financement — visible si au moins une aide éligible */}
+      {eligibleCount > 0 && (
+        <SimulateurFinancement monumentId={params.id} />
+      )}
 
       {/* Liste des aides */}
       {sorted.length === 0 ? (

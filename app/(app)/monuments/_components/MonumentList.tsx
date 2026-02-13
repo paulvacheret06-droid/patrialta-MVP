@@ -12,6 +12,8 @@ type Monument = {
   region: string
   type_protection: string | null
   is_verified_merimee: boolean
+  type_travaux: string[] | null
+  budget_estime: number | null
 }
 
 const PROTECTION_LABELS: Record<string, string> = {
@@ -54,6 +56,11 @@ export default function MonumentList({ monuments }: MonumentListProps) {
                   Mérimée
                 </span>
               )}
+              {((m.type_travaux && m.type_travaux.length > 0) || m.budget_estime) && (
+                <span className="inline-flex items-center rounded px-2 py-0.5 text-xs font-medium bg-amber-50 text-amber-700">
+                  Mode projet
+                </span>
+              )}
             </div>
             <p className="text-xs text-gray-500 mt-0.5">
               {m.commune} · {m.departement} · {m.region}
@@ -66,6 +73,13 @@ export default function MonumentList({ monuments }: MonumentListProps) {
               className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors"
             >
               Voir les aides
+            </Link>
+            <span className="text-gray-300">·</span>
+            <Link
+              href={`/monuments/${m.id}/edit`}
+              className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              Mode projet
             </Link>
             <span className="text-gray-300">·</span>
             {pendingDeleteId === m.id ? (

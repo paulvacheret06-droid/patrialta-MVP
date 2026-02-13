@@ -49,5 +49,13 @@ export const templateDrac: Template = {
       obligatoire: true,
       pieces_justificatives: ['Tableau de financement détaillé'],
     },
+    {
+      id: 'engagement_proprietaire',
+      titre: 'Engagement du propriétaire',
+      instructions_prompt:
+        "Rédige une déclaration d'engagement du propriétaire (50-100 mots) : engagement à réaliser les travaux conformément aux prescriptions de l'ABF, à maintenir le bien accessible au public selon les dispositions légales, et à conserver le monument en bon état d'entretien.",
+      obligatoire: true,
+      pieces_justificatives: [],
+    },
   ],
 }
