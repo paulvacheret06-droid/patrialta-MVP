@@ -6,8 +6,8 @@ export const metadata: Metadata = {
 
 export default function ConfidentialitePage() {
   return (
-    <article className="prose prose-sm prose-gray max-w-none">
-      <h1>Politique de confidentialité</h1>
+    <article className="max-w-none text-gray-700 leading-relaxed">
+      <h1 className="text-3xl font-bold text-gray-900 mb-2">Politique de confidentialité</h1>
       <p className="text-gray-500 text-sm">Dernière mise à jour : février 2026</p>
 
       <p>
@@ -15,13 +15,13 @@ export default function ConfidentialitePage() {
         sur la Protection des Données (RGPD — Règlement UE 2016/679) et à la loi Informatique et Libertés.
       </p>
 
-      <h2>1. Responsable du traitement</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-3">1. Responsable du traitement</h2>
       <p>
         Paul Vacheret, opérant sous la marque PatriAlta — Lyon, France.<br />
         Contact : <strong>contact@patrialta.fr</strong>
       </p>
 
-      <h2>2. Données collectées et finalités</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-3">2. Données collectées et finalités</h2>
       <table>
         <thead>
           <tr>
@@ -69,7 +69,7 @@ export default function ConfidentialitePage() {
         </tbody>
       </table>
 
-      <h2>3. Durée de conservation</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-3">3. Durée de conservation</h2>
       <ul>
         <li><strong>Données de compte :</strong> durée de la relation contractuelle + 3 ans après résiliation</li>
         <li><strong>Données monument et dossiers :</strong> durée de la relation contractuelle</li>
@@ -78,7 +78,7 @@ export default function ConfidentialitePage() {
         <li><strong>Après suppression de compte :</strong> toutes les données personnelles sont effacées dans un délai de 30 jours</li>
       </ul>
 
-      <h2>4. Sous-traitants</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-3">4. Sous-traitants</h2>
       <ul>
         <li><strong>Supabase Inc.</strong> — hébergement base de données et fichiers (AWS eu-central-1, Frankfurt)</li>
         <li><strong>Vercel Inc.</strong> — hébergement application (région EU, Frankfurt)</li>
@@ -87,7 +87,7 @@ export default function ConfidentialitePage() {
       </ul>
       <p>Tous les sous-traitants traitent les données dans l&apos;Union Européenne ou selon des garanties adéquates.</p>
 
-      <h2>5. Vos droits</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-3">5. Vos droits</h2>
       <p>Conformément au RGPD, vous disposez des droits suivants :</p>
       <ul>
         <li><strong>Droit d&apos;accès :</strong> obtenir une copie de vos données</li>
@@ -102,14 +102,14 @@ export default function ConfidentialitePage() {
         Vous pouvez également introduire une réclamation auprès de la <strong>CNIL</strong> (cnil.fr).
       </p>
 
-      <h2>6. Sécurité</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-3">6. Sécurité</h2>
       <p>
         PatriAlta met en œuvre des mesures techniques et organisationnelles adaptées : chiffrement
         des communications (TLS), hébergement dans l&apos;UE, accès aux données restreint par authentification
         (RLS Supabase), mots de passe hachés, clés API non exposées côté client.
       </p>
 
-      <h2>7. Contact</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-3">7. Contact</h2>
       <p>
         Pour toute question relative à vos données personnelles :<br />
         Email : <strong>contact@patrialta.fr</strong><br />
